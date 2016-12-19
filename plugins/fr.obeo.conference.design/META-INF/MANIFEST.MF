@@ -7,7 +7,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.sirius,
  org.eclipse.sirius.common.acceleo.mtl,
- fr.obeo.conference
+ fr.obeo.conference;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ManifestVersion: 2
