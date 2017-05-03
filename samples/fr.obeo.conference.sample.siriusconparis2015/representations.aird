@@ -453,7 +453,7 @@
                 <styles xmi:type="notation:FilteringStyle" xmi:id="_dWm3ko4YEeWsY5dO3gIeZg"/>
               </children>
               <styles xmi:type="notation:ShapeStyle" xmi:id="_dWmQgY4YEeWsY5dO3gIeZg" fontName="Segoe UI" fontHeight="8" bold="true"/>
-              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_dWmQgo4YEeWsY5dO3gIeZg" x="115" y="209" width="235"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_dWmQgo4YEeWsY5dO3gIeZg" x="105" y="209" width="235"/>
             </children>
             <children xmi:type="notation:Node" xmi:id="_saTxoJdrEeWOHtMfe8QkrA" type="3009" element="_sY41UJdrEeWOHtMfe8QkrA">
               <children xmi:type="notation:Node" xmi:id="_yWPkkJdrEeWOHtMfe8QkrA" type="3012" element="_yVbFMJdrEeWOHtMfe8QkrA">

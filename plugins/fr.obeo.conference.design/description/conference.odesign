@@ -96,7 +96,7 @@
             <variable name="talk"/>
             <viewVariable name="containerView"/>
             <initialOperation>
-              <firstModelOperations xsi:type="tool:ChangeContext" browseExpression="[eContainer(conference::Conference)/]">
+              <firstModelOperations xsi:type="tool:ChangeContext" browseExpression="aql:self.eContainer(conference::Conference)">
                 <subModelOperations xsi:type="tool:CreateInstance" typeName="conference.Person" referenceName="speakers" variableName="newSpeaker">
                   <subModelOperations xsi:type="tool:SetValue" featureName="name" valueExpression="set this name"/>
                   <subModelOperations xsi:type="tool:ChangeContext" browseExpression="var:talk">
@@ -111,9 +111,9 @@
             <containerView name="containerView"/>
             <container name="container"/>
             <initialOperation>
-              <firstModelOperations xsi:type="tool:For" expression="var:selectedSpeakers">
-                <subModelOperations xsi:type="tool:ChangeContext" browseExpression="var:i">
-                  <subModelOperations xsi:type="tool:SetValue" featureName="talks" valueExpression="container"/>
+              <firstModelOperations xsi:type="tool:For" expression="var:selectedSpeakers" iteratorName="iSelectedSpeaker">
+                <subModelOperations xsi:type="tool:ChangeContext" browseExpression="var:iSelectedSpeaker">
+                  <subModelOperations xsi:type="tool:SetValue" featureName="talks" valueExpression="var:container"/>
                 </subModelOperations>
               </firstModelOperations>
             </initialOperation>
@@ -327,51 +327,18 @@
       </ownedLineMappings>
       <ownedColumnMappings name="LocationColumn" headerLabelExpression="feature:name" domainClass="conference.Location" semanticCandidatesExpression="feature:locations"/>
       <intersection name="TalkDayCell" lineMapping="//@ownedViewpoints[name='Conference%20Views']/@ownedRepresentations[name='ProgramTable']/@ownedLineMappings[name='DayLine']/@ownedSubLines[name='TalkLine']" columnMapping="//@ownedViewpoints[name='Conference%20Views']/@ownedRepresentations[name='ProgramTable']/@ownedColumnMappings.0" labelExpression="feature:time" columnFinderExpression="feature:location">
-        <foregroundConditionalStyle predicateExpression="[eContainer(Track).name='Web Technologies'/]">
+        <foregroundConditionalStyle predicateExpression="aql:self.eContainer(conference::Track) = self.eContainer(conference::Conference).tracks->at(1)">
           <style labelSize="8">
-            <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='white']"/>
+            <labelFormat>bold</labelFormat>
+            <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
           </style>
         </foregroundConditionalStyle>
-        <backgroundConditionalStyle predicateExpression="[eContainer(Track).name='Eclipse Technology'/]">
-          <style>
-            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='purple']"/>
+        <foregroundConditionalStyle predicateExpression="aql:self.eContainer(conference::Track) = self.eContainer(conference::Conference).tracks->at(2)">
+          <style labelSize="8">
+            <labelFormat>bold</labelFormat>
+            <foreGroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='green']"/>
           </style>
-        </backgroundConditionalStyle>
-        <backgroundConditionalStyle predicateExpression="[eContainer(Track).name='BOF'/]">
-          <style>
-            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_gray']"/>
-          </style>
-        </backgroundConditionalStyle>
-        <backgroundConditionalStyle predicateExpression="[eContainer(Track).name='Industry Solutions'/]">
-          <style>
-            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
-          </style>
-        </backgroundConditionalStyle>
-        <backgroundConditionalStyle predicateExpression="[eContainer(Track).name='Other Cool Stuff'/]">
-          <style>
-            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
-          </style>
-        </backgroundConditionalStyle>
-        <backgroundConditionalStyle predicateExpression="[eContainer(Track).name='Web Technologies'/]">
-          <style>
-            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='dark_chocolate']"/>
-          </style>
-        </backgroundConditionalStyle>
-        <backgroundConditionalStyle predicateExpression="[eContainer(Track).name='Customer Testimonies'/]">
-          <style>
-            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
-          </style>
-        </backgroundConditionalStyle>
-        <backgroundConditionalStyle predicateExpression="[eContainer(Track).name='General'/]">
-          <style>
-            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
-          </style>
-        </backgroundConditionalStyle>
-        <backgroundConditionalStyle predicateExpression="[eContainer(Track).name='Technical Stuff &amp; Discovery'/]">
-          <style>
-            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='green']"/>
-          </style>
-        </backgroundConditionalStyle>
+        </foregroundConditionalStyle>
       </intersection>
     </ownedRepresentations>
     <ownedRepresentations xsi:type="description_3:TreeDescription" name="Stats" initialisation="true" domainClass="conference.Conference">
@@ -471,6 +438,18 @@
             <root name="root"/>
           </directEdit>
         </subItemMappings>
+        <create name="Create a new Talk" mapping="//@ownedViewpoints[name='Conference%20Views']/@ownedRepresentations[name='Stats']/@subItemMappings[name='Speakers']">
+          <firstModelOperation xsi:type="tool:ChangeContext" browseExpression="var:selectedTrack">
+            <subModelOperations xsi:type="tool:CreateInstance" typeName="conference.Talk" referenceName="talks">
+              <subModelOperations xsi:type="tool:SetValue" featureName="name" valueExpression="aql:'new talk ' + selectedTrack.oclAsType(conference::Track).talks->size()"/>
+            </subModelOperations>
+          </firstModelOperation>
+          <variables name="root" documentation="The semantic element of the tree."/>
+          <variables name="element" documentation="The currently edited element."/>
+          <variables name="container" documentation="The semantic element corresponding to the view container.">
+            <subVariables xsi:type="tool:SelectModelElementVariable" name="selectedTrack" candidatesExpression="aql:root.oclAsType(conference::Conference).tracks" message="In which track do you want to create a talk?"/>
+          </variables>
+        </create>
       </subItemMappings>
       <ownedRepresentationCreationDescriptions xsi:type="tool_1:DiagramCreationDescription" name="Track Details Diagram" diagramDescription="//@ownedViewpoints[name='Conference%20Views']/@ownedRepresentations[name='Tracks%20Diagram']">
         <initialOperation>
@@ -493,7 +472,7 @@
       <layout xsi:type="description_1:CompositeLayout" padding="20" direction="LeftToRight"/>
       <defaultLayer name="Default">
         <containerMappings name="Week" semanticCandidatesExpression="var:self" domainClass="conference.Conference" childrenPresentation="HorizontalStack">
-          <subContainerMappings name="DayContainer" semanticCandidatesExpression="[days/]" domainClass="conference.Day" childrenPresentation="VerticalStack">
+          <subContainerMappings name="DayContainer" semanticCandidatesExpression="feature:days" domainClass="conference.Day" childrenPresentation="VerticalStack">
             <subContainerMappings name="Days_TalkContainer" detailDescriptions="//@ownedViewpoints[name='Conference%20Views']/@ownedRepresentations[name='Tracks%20Diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='Subjects']" navigationDescriptions="//@ownedViewpoints[name='Conference%20Views']/@ownedRepresentations[name='Tracks%20Diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='Nav%20Subjects']" semanticCandidatesExpression="aql:self.talks->sortedBy(myTalk | myTalk.time)" domainClass="conference.Talk" childrenPresentation="List">
               <subNodeMappings name="Title" semanticCandidatesExpression="var:self" domainClass="conference.Talk">
                 <style xsi:type="style:SquareDescription" labelSize="9" showIcon="false" iconPath="/fr.obeo.conference.design/images/Day.gif" resizeKind="NSEW">
@@ -511,7 +490,7 @@
                 </style>
               </subNodeMappings>
               <subNodeMappings name="Speaker" semanticCandidatesExpression="var:self" domainClass="conference.Talk">
-                <style xsi:type="style:SquareDescription" showIcon="false" labelExpression="aql:if (self.speakers->isEmpty()) then '' else 'by ' + self.speakers.name->sep(', ')" iconPath="/fr.obeo.conference.design/images/Day.gif" labelAlignment="LEFT" resizeKind="NSEW">
+                <style xsi:type="style:SquareDescription" showIcon="false" labelExpression="aql:if (self.speakers->isEmpty()) then '' else 'by ' + self.speakers.name->sep(', ') endif" iconPath="/fr.obeo.conference.design/images/Day.gif" labelAlignment="LEFT" resizeKind="NSEW">
                   <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
                   <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
                   <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
@@ -878,8 +857,9 @@
       </layers>
     </ownedRepresentationExtensions>
   </ownedViewpoints>
-  <extensions xsi:type="properties:ViewExtensionDescription" identifier="Backup">
-    <groups identifier="Default" labelExpression="Group" semanticCandidateExpression="var:self">
+  <extensions xsi:type="properties:ViewExtensionDescription" identifier="Properties Backup">
+    <metamodels href="http://www.example.org/conference#/"/>
+    <groups identifier="Default" labelExpression="Group" domainClass="conference.Talk" semanticCandidateExpression="var:self">
       <controls xsi:type="properties:TextDescription" labelExpression="Name:" helpExpression="The title of the talk" valueExpression="aql:self.name">
         <initialOperation>
           <firstModelOperations xsi:type="tool:SetValue" featureName="name" valueExpression="var:newValue"/>
